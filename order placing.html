@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Place Your Order – DropCart</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #0b0f14;
+      --panel: #0f141b;
+      --muted: #9fb0c3;
+      --text: #e7effa;
+      --brand: #66e4a6;
+      --accent: #72a1ff;
+      --error: #ff6b6b;
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --ring: 0 0 0 3px rgba(102,228,166,.25);
+    }
+    *{box-sizing:border-box}
+    html{background:var(--bg);color:var(--text);-webkit-text-size-adjust:100%}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;line-height:1.5}
+    a{color:inherit;text-decoration:none}
+
+    .container{width:min(1100px,92%);margin-inline:auto}
+
+    /* header */
+    header{position:sticky;top:0;z-index:20;backdrop-filter:saturate(1.4) blur(10px);background:linear-gradient(180deg,rgba(12,16,22,.9),rgba(12,16,22,.6));border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav{height:68px;display:flex;align-items:center;gap:14px}
+    .brand{font-weight:800;letter-spacing:.3px}
+    .brand .dot{color:var(--brand)}
+
+    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.9rem 1.1rem;border-radius:999px;font-weight:600;color:#081014;background:var(--brand);border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);transition:.15s;cursor:pointer}
+    .btn:hover{transform:translateY(-2px);filter:brightness(1.03)}
+    .btn.secondary{background:#0f141b;color:var(--text);border:1px solid rgba(255,255,255,.12)}
+    .btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.14)}
+
+    /* layout */
+    main{padding:28px 0 44px}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    @media(max-width: 880px){.grid{grid-template-columns:1fr}}
+
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+    h1{font-size:clamp(26px,3vw,40px);margin:0}
+    h2{font-size:20px;margin:0 0 8px}
+    p{color:var(--muted)}
+    .muted{color:var(--muted)}
+
+    /* cart */
+    .cart-list{display:grid;gap:12px;margin-top:12px}
+    .item{display:grid;grid-template-columns:52px 1fr .6fr .6fr .7fr auto;gap:10px;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px}
+    .thumb{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,rgba(114,161,255,.16),rgba(102,228,166,.14));display:grid;place-items:center;border:1px solid rgba(255,255,255,.1)}
+    .title{font-weight:600}
+    .qty input{width:80px;padding:.55rem .6rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:#0f141b;color:var(--text)}
+    .price,.line{white-space:nowrap}
+    .remove{background:transparent;border:1px solid rgba(255,255,255,.16);color:var(--text);border-radius:12px;padding:.45rem .7rem;cursor:pointer}
+    @media(max-width:640px){
+      .item{grid-template-columns:52px 1fr auto;grid-template-areas:
+        "thumb title remove"
+        "thumb qty qty"
+        "thumb price line";
+      }
+      .item .thumb{grid-area:thumb}
+      .item .title{grid-area:title}
+      .item .qty{grid-area:qty}
+      .item .price{grid-area:price}
+      .item .line{grid-area:line}
+      .item .remove{grid-area:remove;justify-self:end}
+    }
+
+    .totals{display:grid;gap:8px;margin-top:12px}
+    .row{display:flex;justify-content:space-between;align-items:center}
+    .row.total{font-weight:800;font-size:1.1rem}
+
+    /* form */
+    form{display:grid;gap:12px;margin-top:10px}
+    .field{display:grid;gap:6px}
+    label{font-size:.9rem;color:var(--muted)}
+    input,select,textarea{padding:.8rem 1rem;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:#0f141b;color:var(--text);outline:none;width:100%;max-width:100%}
+    input:focus,select:focus,textarea:focus{box-shadow:var(--ring)}
+    .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    @media(max-width: 700px){.row-2,.row-3{grid-template-columns:1fr}}
+
+    .actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:10px}
+    .hint{font-size:.85rem;color:var(--muted)}
+    .ok{color:#8ff0b4}
+    .err{color:var(--error)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">DropCart<span class="dot">.</span></div>
+      <div style="margin-left:auto" class="muted">Secure Checkout</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="margin-bottom:14px">
+      <h1>Review your cart & place order</h1>
+      <p class="muted">Adjust quantities below. Your total updates instantly.</p>
+    </div>
+
+    <div class="grid">
+      <!-- CART -->
+      <section class="panel" id="cartPanel">
+        <h2>Your Cart</h2>
+        <div class="cart-list" id="cartList"></div>
+        <div class="totals">
+          <div class="row"><span>Subtotal</span><strong id="subTotal">$0.00</strong></div>
+          <div class="row"><span>Shipping</span><span id="shipping">$0.00</span></div>
+          <div class="row total"><span>Total</span><span id="grandTotal">$0.00</span></div>
+        </div>
+      </section>
+
+      <!-- ORDER FORM -->
+      <section class="panel">
+        <h2>Shipping & Contact</h2>
+        <form id="orderForm" action="https://formspree.io/f/xqadgwdv" method="POST">
+          <div class="row-2">
+            <div class="field">
+              <label for="name">Full Name</label>
+              <input id="name" name="name" placeholder="Alex Johnson" required>
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="alex@email.com" required>
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" placeholder="+(123) 12345 67890" required>
+            </div>
+            <div class="field">
+              <label for="country">Country</label>
+              <input id="country" name="country">
+            </div>
+          </div>
+          <div class="field">
+            <label for="address">Address</label>
+            <input id="address" name="address" placeholder="House, Street, Area" required>
+          </div>
+          <div class="row-3">
+            <div class="field">
+              <label for="city">City</label>
+              <input id="city" name="city" required>
+            </div>
+            <div class="field">
+              <label for="state">State</label>
+              <input id="state" name="state" required>
+            </div>
+            <div class="field">
+              <label for="zip">ZIP / PIN</label>
+              <input id="zip" name="zip" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="notes">Notes (optional)</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Any special delivery notes…"></textarea>
+          </div>
+
+          <!-- Hidden fields (auto-filled) -->
+          <input type="hidden" name="cart_json" id="cartJson">
+          <input type="hidden" name="order_total" id="orderTotal">
+
+          <div class="actions">
+            <button type="submit" class="btn" id="placeOrderBtn">Place Order & Pay</button>
+            <a id="payOnlyBtn" class="btn secondary" href="#">Pay Only</a>
+          </div>
+          <p class="hint">Payments are processed on a secure Stripe page. You'll receive order details by email.</p>
+          <p class="hint" id="status"></p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+<!-- SHIPPING TIME -->
+<section id="shipping" style="padding:60px 20px;max-width:800px;margin:auto;text-align:center">
+  <h2 style="font-size:2rem;margin-bottom:10px">📦 Estimated Shipping Time</h2>
+  <p style="font-size:1.2rem;color:#555">Your order will arrive by:</p>
+  <p id="shipping-date" style="font-size:1.4rem;font-weight:600;margin-top:10px;color:var(--brand)">
+    Calculating...
+  </p>
+</section>
+
+
+  <footer style="padding:28px 0;color:var(--muted)">
+    <div class="container" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.08);padding-top:14px">
+      <small>© <span id="year"></span> DropCart. All rights reserved.</small>
+      <small>Secure · PCI compliant · SSL</small>
+    </div>
+  </footer>
+
+  <script src="order.js"></script>
+</body>
+</html>
